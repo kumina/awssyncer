@@ -5,6 +5,8 @@
 #include <string>
 
 struct InotifyEvent {
+  enum { CREATED, MODIFIED, REMOVED } event;
+  bool is_directory, queue_overflow;
   std::string path;
 };
 
@@ -15,7 +17,7 @@ class InotifyPoller {
   bool AddWatch(const std::string &path);
   void RemoveWatch(const std::string &path);
 
-  bool GetNextEvent(InotifyEvent *);
+  bool GetNextEvent(InotifyEvent *event);
 
  private:
   int fd_;

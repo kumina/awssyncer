@@ -1,7 +1,9 @@
 #include "inotify_poller.h"
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 int main() {
   InotifyPoller ip;
@@ -9,8 +11,10 @@ int main() {
   assert(res);
   for (;;) {
     InotifyEvent event;
-    res = ip.GetNextEvent(&event);
-    assert(res);
+    while (!ip.GetNextEvent(&event)) {
+      std::cout << "Didn't get any events" << std::endl;
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
     std::cout << event.path << std::endl;
   }
 }

@@ -5,10 +5,11 @@
 #include <unistd.h>
 
 #include <cassert>
+#include <cerrno>
 #include <cstring>
 
 InotifyPoller::InotifyPoller()
-    : fd_(inotify_init()),
+    : fd_(inotify_init1(IN_NONBLOCK | IN_CLOEXEC)),
       read_buffer_length_(0),
       read_buffer_offset_(0) {
   assert(fd_ >= 0 && "Failed to create inotify descriptor");
@@ -46,7 +47,9 @@ bool InotifyPoller::GetNextEvent(InotifyEvent *event) {
   if (read_buffer_length_ - read_buffer_offset_ <
       sizeof(struct inotify_event)) {
     ssize_t readlen = read(fd_,  read_buffer_, sizeof(read_buffer_));
-    assert(readlen >= sizeof(struct inotify_event) && "inotify read failed");
+    if (readlen == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+      return false;
+    assert(readlen >= (ssize_t)sizeof(struct inotify_event) && "inotify read failed");
     read_buffer_offset_ = 0;
     read_buffer_length_ = readlen;
   }
@@ -55,14 +58,20 @@ bool InotifyPoller::GetNextEvent(InotifyEvent *event) {
   struct inotify_event ev;
   memcpy(&ev, read_buffer_, sizeof(ev));
   read_buffer_offset_ += sizeof(ev);
+  assert(read_buffer_offset_ <= read_buffer_length_ &&
+         "Attempted to escape read buffer");
+
+  // Extract scalar data from the event.
+  event->is_directory = (ev.mask & IN_ISDIR) != 0;
+  event->queue_overflow = (ev.mask & IN_Q_OVERFLOW) != 0;
 
   // Extract the pathname string.
   event->path = directories_[ev.wd];
   event->path += '/';
   event->path += std::string(read_buffer_ + read_buffer_offset_, ev.len - 1);
   read_buffer_offset_ += ev.len;
-
   assert(read_buffer_offset_ <= read_buffer_length_ &&
          "Attempted to escape read buffer");
+
   return true;
 }
