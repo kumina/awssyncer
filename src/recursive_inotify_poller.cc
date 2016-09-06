@@ -6,7 +6,7 @@
 
 bool RecursiveInotifyPoller::AddWatch(const std::string &path) {
   // Add the path itself.
-  if (!ip_.AddWatch(path))
+  if (!ip_->AddWatch(path))
     return false;
 
   // Recursive add all of its children.
@@ -25,7 +25,7 @@ bool RecursiveInotifyPoller::AddWatch(const std::string &path) {
 
 bool RecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
   // Fetch next event.
-  if (!ip_.GetNextEvent(event))
+  if (!ip_->GetNextEvent(event))
     return false;
 
   // Add a new watch in case we've created a new directory.

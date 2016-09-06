@@ -1,4 +1,4 @@
-#include "inotify_poller.h"
+#include "nonrecursive_inotify_poller.h"
 
 #include <sys/inotify.h>
 
@@ -8,14 +8,14 @@
 #include <cerrno>
 #include <cstring>
 
-InotifyPoller::InotifyPoller()
+NonrecursiveInotifyPoller::NonrecursiveInotifyPoller()
     : fd_(inotify_init1(IN_NONBLOCK | IN_CLOEXEC)),
       read_buffer_length_(0),
       read_buffer_offset_(0) {
   assert(fd_ >= 0 && "Failed to create inotify descriptor");
 }
 
-bool InotifyPoller::AddWatch(const std::string &path) {
+bool NonrecursiveInotifyPoller::AddWatch(const std::string &path) {
   // Create new inotify watch.
   assert(path[path.size() - 1] == '/' &&
          "Directory names must end with a trailing slash");
@@ -31,7 +31,7 @@ bool InotifyPoller::AddWatch(const std::string &path) {
   return true;
 }
 
-bool InotifyPoller::GetNextEvent(InotifyEvent *event) {
+bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
   struct inotify_event ev;
   for (;;) {
     // Read new events from the kernel if needed.

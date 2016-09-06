@@ -16,22 +16,14 @@ struct InotifyEvent {
 // Poller of inotify events.
 class InotifyPoller {
  public:
-  InotifyPoller();
+  virtual ~InotifyPoller() {}
 
   // Attaches a watch to a single directory.
-  bool AddWatch(const std::string &path);
+  virtual bool AddWatch(const std::string &path) = 0;
 
   // Extracts the next event from the inotify event queue. Returns false
   // if no events are present.
-  bool GetNextEvent(InotifyEvent *event);
-
- private:
-  int fd_;
-  std::map<int, std::string> directories_;
-
-  char read_buffer_[65536];
-  size_t read_buffer_length_;
-  size_t read_buffer_offset_;
+  virtual bool GetNextEvent(InotifyEvent *event) = 0;
 };
 
 #endif
