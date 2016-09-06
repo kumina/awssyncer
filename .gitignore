@@ -1,4 +1,6 @@
+*.a
+*.cmake
 CMakeCache.txt
 CMakeFiles/
+Makefile
 awssyncer
-cmake_install.cmake
