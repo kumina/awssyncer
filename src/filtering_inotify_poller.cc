@@ -12,10 +12,12 @@ FilteringInotifyPoller::FilteringInotifyPoller(InotifyPoller *ip,
 }
 
 bool FilteringInotifyPoller::AddWatch(const std::string &path) {
+  // Don't allow installing watches if the pathname matches.
   return !MatchPath(path) && ip_->AddWatch(path);
 }
 
 bool FilteringInotifyPoller::GetNextEvent(InotifyEvent *event) {
+  // Skip all events that have matching pathnames.
   while (ip_->GetNextEvent(event)) {
     if (!MatchPath(event->path))
       return true;

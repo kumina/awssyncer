@@ -18,6 +18,7 @@ target_link_libraries(awssyncer
                       libawssyncer)
 
 add_executable(awssyncer_test
-               src/filesystem_dirt_test.cc)
+               src/filesystem_dirt_test.cc
+               src/filtering_inotify_poller_test.cc)
 target_link_libraries(awssyncer_test
                       gtest gtest_main libawssyncer)
