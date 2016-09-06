@@ -23,6 +23,7 @@ class InotifyPoller {
 
   // Extracts the next event from the inotify event queue. Returns false
   // if no events are present.
+  // TODO(ed): This should just return std::optional<InotifyEvent>.
   virtual bool GetNextEvent(InotifyEvent *event) = 0;
 };
 
