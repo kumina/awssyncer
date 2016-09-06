@@ -1,4 +1,4 @@
-#include "inotify_poller.h"
+#include "recursive_inotify_poller.h"
 
 #include <cassert>
 #include <chrono>
@@ -6,8 +6,8 @@
 #include <thread>
 
 int main() {
-  InotifyPoller ip;
-  bool res = ip.AddWatch("/tmp");
+  RecursiveInotifyPoller ip;
+  bool res = ip.AddWatch("/tmp/");
   assert(res);
   for (;;) {
     InotifyEvent event;

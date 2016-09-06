@@ -8,7 +8,8 @@ include_directories(contrib/googletest-release-1.8.0/googletest/include)
 
 add_library(libawssyncer STATIC
             src/filesystem_dirt.cc
-            src/inotify_poller.cc)
+            src/inotify_poller.cc
+            src/recursive_inotify_poller.cc)
 
 add_executable(awssyncer
                src/awssyncer.cc)

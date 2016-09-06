@@ -4,19 +4,25 @@
 #include <map>
 #include <string>
 
+// Type of filesystem event that has occurred.
+enum class InotifyEventType { CREATED, MODIFIED, DELETED };
+
+// A filesystem event.
 struct InotifyEvent {
-  enum { CREATED, MODIFIED, REMOVED } event;
-  bool is_directory, queue_overflow;
-  std::string path;
+  InotifyEventType type;  // Type of event.
+  std::string path;       // Path to which the event applied.
 };
 
+// Poller of inotify events.
 class InotifyPoller {
  public:
   InotifyPoller();
 
+  // Attaches a watch to a single directory.
   bool AddWatch(const std::string &path);
-  void RemoveWatch(const std::string &path);
 
+  // Extracts the next event from the inotify event queue. Returns false
+  // if no events are present.
   bool GetNextEvent(InotifyEvent *event);
 
  private:
