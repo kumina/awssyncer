@@ -20,12 +20,22 @@ int main() {
     InotifyEvent event;
     while (rip.GetNextEvent(&event))
       dirt.AddDirtyPath(event.path);
-
-    while (dirt.HasDirtyPaths()) {
-      std::string s;
-      dirt.ExtractDirtyPath(&s);
-      std::cout << "Should sync " << s << std::endl;
+    if (nip.EventsDropped()) {
+      // TODO(ed): Deal with this.
     }
+
+#if 0
+    if (runner.Finished()) {
+      if (runner.PreviousCommandFailed()) {
+        // TODO(ed): Deal with this.
+      }
+      if (dirt.HasDirtyPaths()) {
+        std::string s;
+        dirt.ExtractDirtyPath(&s);
+        SyncPath(&runner, s);
+      }
+    }
+#endif
 
     // TODO(ed): Call poll() here instead of sleeping for a second.
     std::cout << "End quantum" << std::endl;

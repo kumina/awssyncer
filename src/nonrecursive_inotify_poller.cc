@@ -10,6 +10,7 @@
 
 NonrecursiveInotifyPoller::NonrecursiveInotifyPoller()
     : fd_(inotify_init1(IN_NONBLOCK | IN_CLOEXEC)),
+      events_dropped_(false),
       read_buffer_length_(0),
       read_buffer_offset_(0) {
   assert(fd_ >= 0 && "Failed to create inotify descriptor");
@@ -56,6 +57,10 @@ bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
     // bookkeeping as well.
     if ((ev.mask & IN_IGNORED) != 0)
       directories_.erase(ev.wd);
+
+    // Record that we've been dropping events.
+    if ((ev.mask & IN_Q_OVERFLOW) != 0)
+      events_dropped_ = true;
 
     if (ev.len > 0) {
       // Extract the event type.

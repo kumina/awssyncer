@@ -20,6 +20,10 @@ class FixedResponseInotifyPoller : public InotifyPoller {
     return true;
   }
 
+  bool EventsDropped() {
+    return false;
+  }
+
  private:
   bool done_;
 };

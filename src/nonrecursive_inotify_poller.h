@@ -18,9 +18,14 @@ class NonrecursiveInotifyPoller : public InotifyPoller {
   // if no events are present.
   bool GetNextEvent(InotifyEvent *event) override;
 
+  // Whether or not this queue had to drop events due to a large amount of
+  // activity happening on the file system.
+  bool EventsDropped() override { return events_dropped_; }
+
  private:
   int fd_;
   std::map<int, std::string> directories_;
+  bool events_dropped_;
 
   char read_buffer_[65536];
   size_t read_buffer_length_;

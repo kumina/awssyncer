@@ -25,6 +25,10 @@ class InotifyPoller {
   // if no events are present.
   // TODO(ed): This should just return std::optional<InotifyEvent>.
   virtual bool GetNextEvent(InotifyEvent *event) = 0;
+
+  // Whether or not this queue had to drop events due to a large amount of
+  // activity happening on the file system.
+  virtual bool EventsDropped() = 0;
 };
 
 #endif

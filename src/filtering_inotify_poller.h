@@ -20,6 +20,10 @@ class FilteringInotifyPoller : public InotifyPoller {
   // Gets the next event from the inotify poller.
   bool GetNextEvent(InotifyEvent *event) override;
 
+  // Whether or not this queue had to drop events due to a large amount of
+  // activity happening on the file system.
+  bool EventsDropped() override { return ip_->EventsDropped(); }
+
  private:
   InotifyPoller *ip_;
   regex_t regex_;
