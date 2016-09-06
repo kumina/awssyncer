@@ -1,3 +1,4 @@
+#include "command_runner.h"
 #include "filesystem_dirt.h"
 #include "nonrecursive_inotify_poller.h"
 #include "recursive_inotify_poller.h"
@@ -14,6 +15,8 @@ int main() {
   assert(res);
 
   FilesystemDirt dirt;
+  CommandRunner runner;
+
 
   for (;;) {
     // Handle all inotify events.
@@ -24,7 +27,6 @@ int main() {
       // TODO(ed): Deal with this.
     }
 
-#if 0
     if (runner.Finished()) {
       if (runner.PreviousCommandFailed()) {
         // TODO(ed): Deal with this.
@@ -32,10 +34,9 @@ int main() {
       if (dirt.HasDirtyPaths()) {
         std::string s;
         dirt.ExtractDirtyPath(&s);
-        SyncPath(&runner, s);
+        runner.RunCommand({"echo", "--", s});
       }
     }
-#endif
 
     // TODO(ed): Call poll() here instead of sleeping for a second.
     std::cout << "End quantum" << std::endl;
