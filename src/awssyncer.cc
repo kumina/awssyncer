@@ -1,6 +1,16 @@
+#include "inotify_poller.h"
+
+#include <cassert>
 #include <iostream>
 
 int main() {
-  // TODO(ed): Construct objects, start mainloop.
-  std::cout << "Hello, world" << std::endl;
+  InotifyPoller ip;
+  bool res = ip.AddWatch("/tmp");
+  assert(res);
+  for (;;) {
+    InotifyEvent event;
+    res = ip.GetNextEvent(&event);
+    assert(res);
+    std::cout << event.path << std::endl;
+  }
 }
