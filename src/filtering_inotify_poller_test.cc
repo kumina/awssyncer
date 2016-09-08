@@ -5,6 +5,7 @@
 
 namespace {
 
+// TODO(ed): Rewrite this to use gmock.h.
 class FixedResponseInotifyPoller : public InotifyPoller {
  public:
   FixedResponseInotifyPoller() : done_(false) {}
