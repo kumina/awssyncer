@@ -7,20 +7,16 @@
 // Utility class for running shell commands.
 class CommandRunner {
  public:
-  CommandRunner() : current_process_(-1), previous_command_failed_(false) {}
+  virtual ~CommandRunner() {}
 
   // Returns true of there is no command currently running.
-  bool Finished();
+  virtual bool Finished() = 0;
 
   // Returns true if the previous command did not complete successfully.
-  bool PreviousCommandFailed();
+  virtual bool PreviousCommandFailed() = 0;
 
   // Runs a command by specifying a list of command line arguments.
-  void RunCommand(const std::vector<std::string> &command);
-
- private:
-  pid_t current_process_;
-  bool previous_command_failed_;
+  virtual void RunCommand(const std::vector<std::string> &command) = 0;
 };
 
 #endif

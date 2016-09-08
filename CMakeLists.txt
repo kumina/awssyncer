@@ -7,10 +7,10 @@ add_subdirectory(contrib/googletest-release-1.8.0)
 include_directories(contrib/googletest-release-1.8.0/googletest/include)
 
 add_library(libawssyncer STATIC
-            src/command_runner.cc
             src/filesystem_dirt.cc
             src/filtering_inotify_poller.cc
             src/nonrecursive_inotify_poller.cc
+            src/posix_command_runner.cc
             src/recursive_inotify_poller.cc)
 
 add_executable(awssyncer

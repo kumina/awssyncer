@@ -1,6 +1,6 @@
-#include "command_runner.h"
 #include "filesystem_dirt.h"
 #include "nonrecursive_inotify_poller.h"
+#include "posix_command_runner.h"
 #include "recursive_inotify_poller.h"
 
 #include <cassert>
@@ -15,8 +15,7 @@ int main() {
   assert(res);
 
   FilesystemDirt dirt;
-  CommandRunner runner;
-
+  PosixCommandRunner runner;
 
   for (;;) {
     // Handle all inotify events.
@@ -27,6 +26,7 @@ int main() {
       // TODO(ed): Deal with this.
     }
 
+    // Potentially spawn another sync command.
     if (runner.Finished()) {
       if (runner.PreviousCommandFailed()) {
         // TODO(ed): Deal with this.

@@ -1,4 +1,4 @@
-#include "command_runner.h"
+#include "posix_command_runner.h"
 
 #include <sys/wait.h>
 
@@ -9,7 +9,7 @@
 
 extern char **environ;
 
-bool CommandRunner::Finished() {
+bool PosixCommandRunner::Finished() {
   if (current_process_ >= 0) {
     // Command may still be running. Ask the kernel for the exit status.
     int stat;
@@ -25,12 +25,12 @@ bool CommandRunner::Finished() {
   return true;
 }
 
-bool CommandRunner::PreviousCommandFailed() {
+bool PosixCommandRunner::PreviousCommandFailed() {
   assert(current_process_ == -1 && "Previous command is still running");
   return previous_command_failed_;
 }
 
-void CommandRunner::RunCommand(const std::vector<std::string> &command) {
+void PosixCommandRunner::RunCommand(const std::vector<std::string> &command) {
   assert(current_process_ == -1 && "Previous command is still running");
 
   // Convert argument strings to char *, as expected by posix_spawnp().
