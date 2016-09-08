@@ -79,7 +79,8 @@ TEST(AwsCommandRunner, SyncDirectory) {
   })))
       .Times(1);
   EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "sync", "/tmp/foo", "s3://bucket/tmp/foo",
+      "aws", "s3", "sync", "--exclude", ".volume_ready",
+      "/tmp/foo", "s3://bucket/tmp/foo",
   })))
       .Times(1);
   EXPECT_CALL(command_runner, Finished())
