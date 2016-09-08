@@ -25,6 +25,8 @@ TEST(AwsCommandRunner, Finished) {
       .Times(2)
       .WillOnce(Return(false))
       .WillOnce(Return(true));
+  EXPECT_CALL(command_runner, PreviousCommandFailed())
+      .WillRepeatedly(Return(false));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "s3://unused");
   ASSERT_FALSE(aws_command_runner.Finished());
