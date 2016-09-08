@@ -30,17 +30,17 @@ bool FilesystemDirt::HasDirtyPaths() {
   return dirty_ || !children_.empty();
 }
 
-void FilesystemDirt::ExtractDirtyPath(std::string *path) {
+std::string FilesystemDirt::ExtractDirtyPath() {
   if (dirty_) {
     // End of search: path is dirty.
     dirty_ = false;
+    return "";
   } else {
     // Get child that is dirty.
     auto child = children_.begin();
-    *path += '/';
-    *path += child->first;
-    child->second.ExtractDirtyPath(path);
+    std::string path("/" + child->first + child->second.ExtractDirtyPath());
     if (!child->second.HasDirtyPaths())
       children_.erase(child);
+    return path;
   }
 }

@@ -12,10 +12,7 @@ TEST(FilesystemDirtTest, example) {
     dirt.AddDirtyPath("/a/b");
     ASSERT_TRUE(dirt.HasDirtyPaths());
 
-    std::string path;
-    dirt.ExtractDirtyPath(&path);
-    ASSERT_EQ("/a/b", path);
-
+    ASSERT_EQ("/a/b", dirt.ExtractDirtyPath());
     ASSERT_FALSE(dirt.HasDirtyPaths());
   }
 
@@ -26,10 +23,7 @@ TEST(FilesystemDirtTest, example) {
     dirt.AddDirtyPath("/a");
     ASSERT_TRUE(dirt.HasDirtyPaths());
 
-    std::string path;
-    dirt.ExtractDirtyPath(&path);
-    ASSERT_EQ("/a", path);
-
+    ASSERT_EQ("/a", dirt.ExtractDirtyPath());
     ASSERT_FALSE(dirt.HasDirtyPaths());
   }
 
@@ -40,10 +34,7 @@ TEST(FilesystemDirtTest, example) {
     dirt.AddDirtyPath("/a/b");
     ASSERT_TRUE(dirt.HasDirtyPaths());
 
-    std::string path;
-    dirt.ExtractDirtyPath(&path);
-    ASSERT_EQ("/a", path);
-
+    ASSERT_EQ("/a", dirt.ExtractDirtyPath());
     ASSERT_FALSE(dirt.HasDirtyPaths());
   }
 }

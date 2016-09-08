@@ -22,7 +22,7 @@ class FilesystemDirt {
   bool HasDirtyPaths();
 
   // Extract a pathname of a file or directory that is dirty.
-  void ExtractDirtyPath(std::string *path);
+  std::string ExtractDirtyPath();
 
  private:
   // Is this path dirty?

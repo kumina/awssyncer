@@ -32,8 +32,7 @@ int main() {
         // TODO(ed): Deal with this.
       }
       if (dirt.HasDirtyPaths()) {
-        std::string s;
-        dirt.ExtractDirtyPath(&s);
+        std::string s(dirt.ExtractDirtyPath());
         runner.RunCommand({"echo", "--", s});
       }
     }
