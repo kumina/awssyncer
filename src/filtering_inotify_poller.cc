@@ -26,5 +26,5 @@ bool FilteringInotifyPoller::GetNextEvent(InotifyEvent *event) {
 }
 
 bool FilteringInotifyPoller::MatchPath(const std::string &path) {
-  return regexec(&regex_, path.c_str(), 0, NULL, 0) == 0;
+  return regexec(&regex_, path.c_str(), 0, nullptr, 0) == 0;
 }
