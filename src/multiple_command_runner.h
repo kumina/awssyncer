@@ -7,6 +7,7 @@
 
 class CommandRunner;
 
+// Command runner that can batch multiple commands and run them sequentially.
 class MultipleCommandRunner {
  public:
   MultipleCommandRunner(CommandRunner *command_runner)

@@ -6,6 +6,8 @@
 
 class MultipleCommandRunner;
 
+// Adapter for MultipleCommandrunner to invoke the AWS command line utility.
+// This only exposes the operations in which we're interested.
 class AwsCommandRunner {
  public:
   AwsCommandRunner(MultipleCommandRunner *command_runner,
@@ -28,7 +30,10 @@ class AwsCommandRunner {
   void Remove(const std::string &path);
 
  private:
+  // Underlying command runner.
   MultipleCommandRunner *command_runner_;
+
+  // S3 bucket URL, e.g. "s3://my_bucket".
   std::string url_;
 };
 
