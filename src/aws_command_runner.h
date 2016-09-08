@@ -11,8 +11,9 @@ class MultipleCommandRunner;
 class AwsCommandRunner {
  public:
   AwsCommandRunner(MultipleCommandRunner *command_runner,
-                   const std::string &url)
-      : command_runner_(command_runner), url_(url) {}
+                   const std::string &local_path, const std::string& s3_bucket)
+      : command_runner_(command_runner),
+        local_path_(local_path), s3_bucket_(s3_bucket) {}
 
   // Returns true of there is no command currently running.
   bool Finished();
@@ -33,8 +34,15 @@ class AwsCommandRunner {
   // Underlying command runner.
   MultipleCommandRunner *command_runner_;
 
-  // S3 bucket URL, e.g. "s3://my_bucket".
-  std::string url_;
+  // Path prefix to strip from local paths.
+  std::string local_path_;
+
+  // S3 bucket name, e.g. "mybucket".
+  std::string s3_bucket_;
+
+  // Translates a local path to a full URL to the S3 bucket with the
+  // pathname prefix stripped off.
+  std::string GetFullUrl(const std::string& path);
 };
 
 #endif

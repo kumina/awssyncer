@@ -5,7 +5,7 @@ ENV AWS_ACCESS_KEY_ID ''
 ENV AWS_DEFAULT_REGION ''
 ENV AWS_SECRET_ACCESS_KEY ''
 ENV FILTER_REGEX ''
-ENV S3_PATH ''
+ENV S3_BUCKET ''
 
 COPY docker_startup.sh /sbin/docker_startup.sh
 COPY . /tmp/awssyncer-src/
