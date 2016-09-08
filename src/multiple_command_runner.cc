@@ -6,9 +6,10 @@
 bool MultipleCommandRunner::Finished() {
   if (!command_runner_->Finished())
     return false;
+  if (PreviousCommandFailed())
+    return true;
 
   if (!enqueued_commands_.empty()) {
-    PreviousCommandFailed();
     const auto& next = enqueued_commands_.front();
     command_runner_->RunCommand(next.first);
     ignore_failures_for_current_command_ = next.second;
