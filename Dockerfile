@@ -11,7 +11,7 @@ COPY docker_startup.sh /sbin/docker_startup.sh
 COPY . /tmp/awssyncer-src/
 
 RUN apk --update upgrade \
- && apk add cmake g++ ninja py-pip \
+ && apk add cmake g++ ninja python py-pip \
  && mkdir -p /srv/data \
  && pip install awscli \
  && cd /tmp/awssyncer-src/ \
