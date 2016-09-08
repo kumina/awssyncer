@@ -1,5 +1,6 @@
 #include "aws_command_runner.h"
 #include "filesystem_dirt.h"
+#include "filtering_inotify_poller.h"
 #include "multiple_command_runner.h"
 #include "nonrecursive_inotify_poller.h"
 #include "posix_command_runner.h"
@@ -25,10 +26,12 @@ static std::ostream& Log() {
 
 // Performs a single iteration of the AWS syncer, terminating if an error has
 // occurred.
-static void RunOnce(const std::string& local_path, const std::string& s3_path) {
+static void RunOnce(const std::string& local_path, const std::string& s3_path,
+                    const std::string& filter_regex) {
   // Set up inotify polling.
   NonrecursiveInotifyPoller nip;
-  RecursiveInotifyPoller rip(&nip);
+  FilteringInotifyPoller fip(&nip, filter_regex);
+  RecursiveInotifyPoller rip(&fip);
   bool res = rip.AddWatch(local_path);
   assert(res);
 
@@ -82,14 +85,15 @@ static void RunOnce(const std::string& local_path, const std::string& s3_path) {
 
 int main() {
   // Obtain configuration from environment variables.
-  std::string local_path = std::getenv("WATCH_DIR");
-  std::string s3_path = std::getenv("BUCKET");
+  std::string local_path = std::getenv("LOCAL_PATH");
+  std::string s3_path = std::getenv("S3_PATH");
+  std::string filter_regex = std::getenv("FILTER_REGEX");
 
   // Keep on running indefinitely, restarting if an error occurred. Put a pause
   // of a couple of seconds in between, so that we never perform any actions in
   // a tight loop.
   for (;;) {
-    RunOnce(local_path, s3_path);
+    RunOnce(local_path, s3_path, filter_regex);
     Log() << "Restarting in five seconds" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(5));
   }
