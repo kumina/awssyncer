@@ -2,12 +2,14 @@
 #define AWS_COMMAND_RUNNER_H
 
 #include <string>
+#include <vector>
 
-class CommandRunner;
+class MultipleCommandRunner;
 
 class AwsCommandRunner {
  public:
-  AwsCommandRunner(CommandRunner *command_runner, const std::string &url)
+  AwsCommandRunner(MultipleCommandRunner *command_runner,
+                   const std::string &url)
       : command_runner_(command_runner), url_(url) {}
 
   // Returns true of there is no command currently running.
@@ -16,14 +18,17 @@ class AwsCommandRunner {
   // Returns true if the previous command did not complete successfully.
   bool PreviousCommandFailed();
 
-  // Runs an AWS S3 syncer process.
-  void RunSync(const std::string &path);
+  // Runs an AWS S3 file copier process.
+  void CopyFile(const std::string &path);
+
+  // Runs an AWS S3 directory syncer process.
+  void SyncDirectory(const std::string &path);
 
   // Runs an AWS S3 remover process.
-  void RunRemove(const std::string &path);
+  void Remove(const std::string &path);
 
  private:
-  CommandRunner *command_runner_;
+  MultipleCommandRunner *command_runner_;
   std::string url_;
 };
 
