@@ -76,7 +76,6 @@ static void RunOnce(const std::string& local_path, const std::string& s3_path) {
     }
 
     // TODO(ed): Call poll() here instead of sleeping for a second.
-    Log() << "Next iteration in one second" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 }
