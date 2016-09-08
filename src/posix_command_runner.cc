@@ -5,7 +5,6 @@
 #include <spawn.h>
 
 #include <cassert>
-#include <iostream>
 
 extern char **environ;
 
@@ -32,12 +31,12 @@ bool PosixCommandRunner::PreviousCommandFailed() {
 
 void PosixCommandRunner::RunCommand(const std::vector<std::string> &command) {
   assert(current_process_ == -1 && "Previous command is still running");
+  assert(!previous_command_failed_ && "Attempted to continue after failure");
 
   // Convert argument strings to char *, as expected by posix_spawnp().
   std::vector<char *> args;
-  for (const std::string &arg : command) {
+  for (const std::string &arg : command)
     args.push_back(const_cast<char *>(arg.c_str()));
-  }
   args.push_back(nullptr);
 
   // Spawn subprocess.
