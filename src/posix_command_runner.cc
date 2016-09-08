@@ -31,7 +31,6 @@ bool PosixCommandRunner::PreviousCommandFailed() {
 
 void PosixCommandRunner::RunCommand(const std::vector<std::string> &command) {
   assert(current_process_ == -1 && "Previous command is still running");
-  assert(!previous_command_failed_ && "Attempted to continue after failure");
 
   // Convert argument strings to char *, as expected by posix_spawnp().
   std::vector<char *> args;
@@ -45,4 +44,5 @@ void PosixCommandRunner::RunCommand(const std::vector<std::string> &command) {
     current_process_ = -1;
     previous_command_failed_ = true;
   }
+  previous_command_failed_ = false;
 }
