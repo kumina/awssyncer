@@ -4,7 +4,10 @@ project(awssyncer)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_subdirectory(contrib/googletest-release-1.8.0)
-include_directories(contrib/googletest-release-1.8.0/googletest/include)
+include_directories(
+    contrib/googletest-release-1.8.0/googlemock/include
+    contrib/googletest-release-1.8.0/googletest/include
+)
 
 add_library(libawssyncer STATIC
             src/aws_command_runner.cc
@@ -20,7 +23,8 @@ target_link_libraries(awssyncer
                       libawssyncer)
 
 add_executable(awssyncer_test
+               src/aws_command_runner_test.cc
                src/filesystem_dirt_test.cc
                src/filtering_inotify_poller_test.cc)
 target_link_libraries(awssyncer_test
-                      gtest gtest_main libawssyncer)
+                      gmock gtest gtest_main libawssyncer)
