@@ -10,6 +10,7 @@
 class NonrecursiveInotifyPoller : public InotifyPoller {
  public:
   NonrecursiveInotifyPoller();
+  ~NonrecursiveInotifyPoller();
 
   // Attaches a watch to a single directory.
   bool AddWatch(const std::string &path) override;

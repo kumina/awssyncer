@@ -16,6 +16,10 @@ NonrecursiveInotifyPoller::NonrecursiveInotifyPoller()
   assert(fd_ >= 0 && "Failed to create inotify descriptor");
 }
 
+NonrecursiveInotifyPoller::~NonrecursiveInotifyPoller() {
+  close(fd_);
+}
+
 bool NonrecursiveInotifyPoller::AddWatch(const std::string &path) {
   // Create new inotify watch.
   assert(path[path.size() - 1] == '/' &&
