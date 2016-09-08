@@ -11,6 +11,7 @@ class PosixCommandRunner : public CommandRunner {
  public:
   PosixCommandRunner()
       : current_process_(-1), previous_command_failed_(false) {}
+  ~PosixCommandRunner();
 
   // Returns true of there is no command currently running.
   bool Finished() override;

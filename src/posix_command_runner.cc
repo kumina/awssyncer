@@ -2,11 +2,20 @@
 
 #include <sys/wait.h>
 
+#include <signal.h>
 #include <spawn.h>
 
 #include <cassert>
 
 extern char **environ;
+
+PosixCommandRunner::~PosixCommandRunner() {
+  // Kill the child process.
+  if (current_process_ >= 0) {
+    kill(current_process_, SIGTERM);
+    waitpid(current_process_, nullptr, 0);
+  }
+}
 
 bool PosixCommandRunner::Finished() {
   if (current_process_ >= 0) {
