@@ -9,4 +9,4 @@ aws s3 sync --exclude .volume_ready "${S3_PATH}" /srv/data
 touch /srv/data/.volume_ready
 
 # Start up the AWS syncer to sync back from the local system to S3.
-LOCAL_PATH=/srv/data exec awssyncer
+LOCAL_PATH=/srv/data/ exec awssyncer
