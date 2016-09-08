@@ -13,6 +13,7 @@ add_library(libawssyncer STATIC
             src/aws_command_runner.cc
             src/filesystem_dirt.cc
             src/filtering_inotify_poller.cc
+            src/multiple_command_runner.cc
             src/nonrecursive_inotify_poller.cc
             src/posix_command_runner.cc
             src/recursive_inotify_poller.cc)
