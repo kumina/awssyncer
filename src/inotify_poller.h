@@ -23,8 +23,8 @@ class InotifyPoller {
   // Attaches a watch to a single directory.
   virtual bool AddWatch(const std::string& path) = 0;
 
-  // Extracts the next event from the inotify event queue. Returns false
-  // if no events are present.
+  // Extracts the next event from the inotify event queue. Returns an
+  // object that evaluates to false if no events are present.
   // TODO(ed): Switch this to std::optional<> once supported.
   virtual std::experimental::optional<InotifyEvent> GetNextEvent() = 0;
 

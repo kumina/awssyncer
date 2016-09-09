@@ -16,8 +16,8 @@ class NonrecursiveInotifyPoller : public InotifyPoller {
   // Attaches a watch to a single directory.
   bool AddWatch(const std::string& path) override;
 
-  // Extracts the next event from the inotify event queue. Returns false
-  // if no events are present.
+  // Extracts the next event from the inotify event queue. Returns an
+  // object that evaluates to false if no events are present.
   std::experimental::optional<InotifyEvent> GetNextEvent() override;
 
   // Whether or not this queue had to drop events due to a large amount of
