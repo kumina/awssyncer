@@ -3,7 +3,7 @@
 
 #include "inotify_poller.h"
 
-#include <regex.h>
+#include <regex>
 
 // Inotify poller that can remove files and/or directories from the results
 // when they match a regular expression.
@@ -28,7 +28,7 @@ class FilteringInotifyPoller : public InotifyPoller {
 
  private:
   InotifyPoller* ip_;
-  regex_t regex_;
+  std::regex regex_;
 
   bool MatchPath(const std::string& path);
 };

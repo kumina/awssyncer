@@ -1,14 +1,11 @@
 #include "filtering_inotify_poller.h"
 
-#include <regex.h>
-
 #include <cassert>
+#include <regex>
 
 FilteringInotifyPoller::FilteringInotifyPoller(InotifyPoller* ip,
                                                const std::string& regex)
-    : ip_(ip) {
-  int ret = regcomp(&regex_, regex.c_str(), REG_EXTENDED | REG_NOSUB);
-  assert(ret == 0 && "Invalid regular expression");
+    : ip_(ip), regex_(regex, std::regex::extended | std::regex::nosubs) {
 }
 
 bool FilteringInotifyPoller::AddWatch(const std::string& path) {
@@ -26,5 +23,5 @@ bool FilteringInotifyPoller::GetNextEvent(InotifyEvent* event) {
 }
 
 bool FilteringInotifyPoller::MatchPath(const std::string& path) {
-  return regexec(&regex_, path.c_str(), 0, nullptr, 0) == 0;
+  return std::regex_search(path, regex_);
 }
