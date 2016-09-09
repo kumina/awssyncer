@@ -29,8 +29,6 @@ class FilteringInotifyPoller : public InotifyPoller {
  private:
   InotifyPoller* ip_;
   std::regex regex_;
-
-  bool MatchPath(const std::string& path);
 };
 
 #endif

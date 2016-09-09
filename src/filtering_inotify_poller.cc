@@ -10,18 +10,14 @@ FilteringInotifyPoller::FilteringInotifyPoller(InotifyPoller* ip,
 
 bool FilteringInotifyPoller::AddWatch(const std::string& path) {
   // Don't allow installing watches if the pathname matches.
-  return !MatchPath(path) && ip_->AddWatch(path);
+  return !std::regex_search(path, regex_) && ip_->AddWatch(path);
 }
 
 bool FilteringInotifyPoller::GetNextEvent(InotifyEvent* event) {
   // Skip all events that have matching pathnames.
   while (ip_->GetNextEvent(event)) {
-    if (!MatchPath(event->path))
+    if (!std::regex_search(event->path, regex_))
       return true;
   }
   return false;
-}
-
-bool FilteringInotifyPoller::MatchPath(const std::string& path) {
-  return std::regex_search(path, regex_);
 }
