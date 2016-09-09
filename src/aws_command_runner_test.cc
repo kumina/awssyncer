@@ -13,9 +13,8 @@ class MockCommandRunner : public CommandRunner {
  public:
   MOCK_METHOD0(Finished, bool());
   MOCK_METHOD0(PreviousCommandFailed, bool());
-  MOCK_METHOD1(RunCommand, void(const std::vector<std::string> &command));
+  MOCK_METHOD1(RunCommand, void(const std::vector<std::string>& command));
 };
-
 }
 
 TEST(AwsCommandRunner, Finished) {
@@ -28,8 +27,8 @@ TEST(AwsCommandRunner, Finished) {
   EXPECT_CALL(command_runner, PreviousCommandFailed())
       .WillRepeatedly(Return(false));
 
-  AwsCommandRunner aws_command_runner(&multiple_command_runner,
-                                      "/tmp/", "unused");
+  AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
+                                      "unused");
   ASSERT_FALSE(aws_command_runner.Finished());
   ASSERT_TRUE(aws_command_runner.Finished());
 }
@@ -42,8 +41,8 @@ TEST(AwsCommandRunner, PreviousCommandFailed) {
       .WillOnce(Return(false))
       .WillOnce(Return(true));
 
-  AwsCommandRunner aws_command_runner(&multiple_command_runner,
-                                      "/tmp/", "unused");
+  AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
+                                      "unused");
   ASSERT_FALSE(aws_command_runner.PreviousCommandFailed());
   ASSERT_TRUE(aws_command_runner.PreviousCommandFailed());
 }
@@ -51,21 +50,22 @@ TEST(AwsCommandRunner, PreviousCommandFailed) {
 TEST(AwsCommandRunner, CopyFile) {
   MockCommandRunner command_runner;
   MultipleCommandRunner multiple_command_runner(&command_runner);
-  EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "rm", "--recursive", "s3://bucket/foo",
-  })))
+  EXPECT_CALL(command_runner,
+              RunCommand(std::vector<std::string>({
+                  "aws", "s3", "rm", "--recursive", "s3://bucket/foo",
+              })))
       .Times(1);
-  EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "cp", "/tmp/foo", "s3://bucket/foo",
-  })))
+  EXPECT_CALL(command_runner,
+              RunCommand(std::vector<std::string>({
+                  "aws", "s3", "cp", "/tmp/foo", "s3://bucket/foo",
+              })))
       .Times(1);
-  EXPECT_CALL(command_runner, Finished())
-      .WillRepeatedly(Return(true));
+  EXPECT_CALL(command_runner, Finished()).WillRepeatedly(Return(true));
   EXPECT_CALL(command_runner, PreviousCommandFailed())
       .WillRepeatedly(Return(false));
 
-  AwsCommandRunner aws_command_runner(&multiple_command_runner,
-                                      "/tmp/", "bucket");
+  AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
+                                      "bucket");
   aws_command_runner.CopyFile("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());
@@ -80,20 +80,20 @@ TEST(AwsCommandRunner, SyncDirectory) {
   MockCommandRunner command_runner;
   MultipleCommandRunner multiple_command_runner(&command_runner);
   EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "rm", "s3://bucket/foo",
-  })))
+                                  "aws", "s3", "rm", "s3://bucket/foo",
+                              })))
       .Times(1);
-  EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "sync", "/tmp/foo", "s3://bucket/foo",
-  })))
+  EXPECT_CALL(command_runner,
+              RunCommand(std::vector<std::string>({
+                  "aws", "s3", "sync", "/tmp/foo", "s3://bucket/foo",
+              })))
       .Times(1);
-  EXPECT_CALL(command_runner, Finished())
-      .WillRepeatedly(Return(true));
+  EXPECT_CALL(command_runner, Finished()).WillRepeatedly(Return(true));
   EXPECT_CALL(command_runner, PreviousCommandFailed())
       .WillRepeatedly(Return(false));
 
-  AwsCommandRunner aws_command_runner(&multiple_command_runner,
-                                      "/tmp/", "bucket");
+  AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
+                                      "bucket");
   aws_command_runner.SyncDirectory("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());
@@ -108,20 +108,20 @@ TEST(AwsCommandRunner, Remove) {
   MockCommandRunner command_runner;
   MultipleCommandRunner multiple_command_runner(&command_runner);
   EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "rm", "s3://bucket/foo",
-  })))
+                                  "aws", "s3", "rm", "s3://bucket/foo",
+                              })))
       .Times(1);
-  EXPECT_CALL(command_runner, RunCommand(std::vector<std::string>({
-      "aws", "s3", "rm", "--recursive", "s3://bucket/foo",
-  })))
+  EXPECT_CALL(command_runner,
+              RunCommand(std::vector<std::string>({
+                  "aws", "s3", "rm", "--recursive", "s3://bucket/foo",
+              })))
       .Times(1);
-  EXPECT_CALL(command_runner, Finished())
-      .WillRepeatedly(Return(true));
+  EXPECT_CALL(command_runner, Finished()).WillRepeatedly(Return(true));
   EXPECT_CALL(command_runner, PreviousCommandFailed())
       .WillRepeatedly(Return(false));
 
-  AwsCommandRunner aws_command_runner(&multiple_command_runner,
-                                      "/tmp/", "bucket");
+  AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
+                                      "bucket");
   aws_command_runner.Remove("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());

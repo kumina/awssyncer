@@ -20,13 +20,13 @@ NonrecursiveInotifyPoller::~NonrecursiveInotifyPoller() {
   close(fd_);
 }
 
-bool NonrecursiveInotifyPoller::AddWatch(const std::string &path) {
+bool NonrecursiveInotifyPoller::AddWatch(const std::string& path) {
   // Create new inotify watch.
   assert(path[path.size() - 1] == '/' &&
          "Directory names must end with a trailing slash");
   int watch = inotify_add_watch(
       fd_, path.c_str(), IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY |
-      IN_MOVED_FROM | IN_MOVED_TO);
+                             IN_MOVED_FROM | IN_MOVED_TO);
   if (watch < 0)
     return false;
 
@@ -36,13 +36,13 @@ bool NonrecursiveInotifyPoller::AddWatch(const std::string &path) {
   return true;
 }
 
-bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
+bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
   struct inotify_event ev;
   for (;;) {
     // Read new events from the kernel if needed.
     if (read_buffer_offset_ + sizeof(struct inotify_event) >
         read_buffer_length_) {
-      ssize_t readlen = read(fd_,  read_buffer_, sizeof(read_buffer_));
+      ssize_t readlen = read(fd_, read_buffer_, sizeof(read_buffer_));
       if (readlen == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
         return false;
       assert(readlen >= (ssize_t)sizeof(struct inotify_event) &&
@@ -69,19 +69,19 @@ bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
     if (ev.len > 0) {
       // Extract the event type.
       switch (ev.mask & IN_ALL_EVENTS) {
-      case IN_CREATE:
-      case IN_MOVED_TO:
-        event->type = InotifyEventType::CREATED;
-        break;
-      case IN_DELETE:
-      case IN_MOVED_FROM:
-        event->type = InotifyEventType::DELETED;
-        break;
-      case IN_MODIFY:
-        event->type = InotifyEventType::MODIFIED;
-        break;
-      default:
-        assert(0 && "Unknown event type");
+        case IN_CREATE:
+        case IN_MOVED_TO:
+          event->type = InotifyEventType::CREATED;
+          break;
+        case IN_DELETE:
+        case IN_MOVED_FROM:
+          event->type = InotifyEventType::DELETED;
+          break;
+        case IN_MODIFY:
+          event->type = InotifyEventType::MODIFIED;
+          break;
+        default:
+          assert(0 && "Unknown event type");
       }
 
       // Extract the pathname string.

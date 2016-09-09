@@ -1,5 +1,5 @@
-#include "command_runner.h"
 #include "multiple_command_runner.h"
+#include "command_runner.h"
 
 #include <cassert>
 
@@ -28,7 +28,7 @@ bool MultipleCommandRunner::PreviousCommandFailed() {
   return previous_command_failed_;
 }
 
-void MultipleCommandRunner::RunCommand(const std::vector<std::string> &command,
+void MultipleCommandRunner::RunCommand(const std::vector<std::string>& command,
                                        bool ignore_failure) {
   assert(!previous_command_failed_ &&
          "Attempted to schedule more commands after failure");

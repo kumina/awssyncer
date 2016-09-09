@@ -4,15 +4,15 @@
 
 #include <cstring>
 
-bool RecursiveInotifyPoller::AddWatch(const std::string &path) {
+bool RecursiveInotifyPoller::AddWatch(const std::string& path) {
   // Add the path itself.
   if (!ip_->AddWatch(path))
     return false;
 
   // Recursive add all of its children.
-  DIR *d = opendir(path.c_str());
+  DIR* d = opendir(path.c_str());
   if (d != nullptr) {
-    struct dirent *de;
+    struct dirent* de;
     while ((de = readdir(d)) != nullptr) {
       if (de->d_type == DT_DIR && strcmp(de->d_name, ".") != 0 &&
           strcmp(de->d_name, "..") != 0)
@@ -23,7 +23,7 @@ bool RecursiveInotifyPoller::AddWatch(const std::string &path) {
   return true;
 }
 
-bool RecursiveInotifyPoller::GetNextEvent(InotifyEvent *event) {
+bool RecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
   // Fetch next event.
   if (!ip_->GetNextEvent(event))
     return false;

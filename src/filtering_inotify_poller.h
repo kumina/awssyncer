@@ -12,23 +12,25 @@
 // slashes.
 class FilteringInotifyPoller : public InotifyPoller {
  public:
-  FilteringInotifyPoller(InotifyPoller *ip, const std::string &regex);
+  FilteringInotifyPoller(InotifyPoller* ip, const std::string& regex);
 
   // Adds watches for a directory and all of its child directories.
-  bool AddWatch(const std::string &path) override;
+  bool AddWatch(const std::string& path) override;
 
   // Gets the next event from the inotify poller.
-  bool GetNextEvent(InotifyEvent *event) override;
+  bool GetNextEvent(InotifyEvent* event) override;
 
   // Whether or not this queue had to drop events due to a large amount of
   // activity happening on the file system.
-  bool EventsDropped() override { return ip_->EventsDropped(); }
+  bool EventsDropped() override {
+    return ip_->EventsDropped();
+  }
 
  private:
-  InotifyPoller *ip_;
+  InotifyPoller* ip_;
   regex_t regex_;
 
-  bool MatchPath(const std::string &path);
+  bool MatchPath(const std::string& path);
 };
 
 #endif

@@ -7,7 +7,8 @@
 // Utility class for running shell commands.
 class CommandRunner {
  public:
-  virtual ~CommandRunner() {}
+  virtual ~CommandRunner() {
+  }
 
   // Returns true of there is no command currently running.
   virtual bool Finished() = 0;
@@ -16,7 +17,7 @@ class CommandRunner {
   virtual bool PreviousCommandFailed() = 0;
 
   // Runs a command by specifying a list of command line arguments.
-  virtual void RunCommand(const std::vector<std::string> &command) = 0;
+  virtual void RunCommand(const std::vector<std::string>& command) = 0;
 };
 
 #endif

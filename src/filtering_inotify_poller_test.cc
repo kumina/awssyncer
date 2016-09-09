@@ -8,14 +8,15 @@ namespace {
 // TODO(ed): Rewrite this to use gmock.h.
 class FixedResponseInotifyPoller : public InotifyPoller {
  public:
-  FixedResponseInotifyPoller() : done_(false) {}
+  FixedResponseInotifyPoller() : done_(false) {
+  }
 
-  bool AddWatch(const std::string &path) override {
+  bool AddWatch(const std::string& path) override {
     EXPECT_EQ("/some/other/path", path);
     return true;
   }
 
-  bool GetNextEvent(InotifyEvent *event) {
+  bool GetNextEvent(InotifyEvent* event) {
     event->path = done_ ? "/some/other/path" : "/matching/path/";
     done_ = true;
     return true;
@@ -28,7 +29,6 @@ class FixedResponseInotifyPoller : public InotifyPoller {
  private:
   bool done_;
 };
-
 }
 
 TEST(FilteringInotifyPollerTest, AddWatch) {

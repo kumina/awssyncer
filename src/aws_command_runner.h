@@ -10,10 +10,12 @@ class MultipleCommandRunner;
 // This only exposes the operations in which we're interested.
 class AwsCommandRunner {
  public:
-  AwsCommandRunner(MultipleCommandRunner *command_runner,
-                   const std::string &local_path, const std::string& s3_bucket)
+  AwsCommandRunner(MultipleCommandRunner* command_runner,
+                   const std::string& local_path, const std::string& s3_bucket)
       : command_runner_(command_runner),
-        local_path_(local_path), s3_bucket_(s3_bucket) {}
+        local_path_(local_path),
+        s3_bucket_(s3_bucket) {
+  }
 
   // Returns true of there is no command currently running.
   bool Finished();
@@ -22,17 +24,17 @@ class AwsCommandRunner {
   bool PreviousCommandFailed();
 
   // Runs an AWS S3 file copier process.
-  void CopyFile(const std::string &path);
+  void CopyFile(const std::string& path);
 
   // Runs an AWS S3 directory syncer process.
-  void SyncDirectory(const std::string &path);
+  void SyncDirectory(const std::string& path);
 
   // Runs an AWS S3 remover process.
-  void Remove(const std::string &path);
+  void Remove(const std::string& path);
 
  private:
   // Underlying command runner.
-  MultipleCommandRunner *command_runner_;
+  MultipleCommandRunner* command_runner_;
 
   // Path prefix to strip from local paths.
   std::string local_path_;

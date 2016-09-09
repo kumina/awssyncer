@@ -13,7 +13,8 @@
 // where needed.
 class FilesystemDirt {
  public:
-  FilesystemDirt() : dirty_(false) {}
+  FilesystemDirt() : dirty_(false) {
+  }
 
   // Marks a file dirty.
   void AddDirtyPath(const std::string& path);

@@ -10,10 +10,11 @@ class CommandRunner;
 // Command runner that can batch multiple commands and run them sequentially.
 class MultipleCommandRunner {
  public:
-  MultipleCommandRunner(CommandRunner *command_runner)
+  MultipleCommandRunner(CommandRunner* command_runner)
       : command_runner_(command_runner),
         ignore_failures_for_current_command_(false),
-        previous_command_failed_(false) {}
+        previous_command_failed_(false) {
+  }
 
   // Returns true of there is no command currently running.
   bool Finished();
@@ -23,11 +24,11 @@ class MultipleCommandRunner {
   bool PreviousCommandFailed();
 
   // Enqueues a command by specifying a list of command line arguments.
-  virtual void RunCommand(const std::vector<std::string> &command,
+  virtual void RunCommand(const std::vector<std::string>& command,
                           bool ignore_failure);
 
  private:
-  CommandRunner *command_runner_;
+  CommandRunner* command_runner_;
   std::queue<std::pair<std::vector<std::string>, bool>> enqueued_commands_;
   bool ignore_failures_for_current_command_;
   bool previous_command_failed_;

@@ -9,8 +9,8 @@
 // Utility class for running shell commands.
 class PosixCommandRunner : public CommandRunner {
  public:
-  PosixCommandRunner()
-      : current_process_(-1), previous_command_failed_(false) {}
+  PosixCommandRunner() : current_process_(-1), previous_command_failed_(false) {
+  }
   ~PosixCommandRunner();
 
   // Returns true of there is no command currently running.
@@ -20,7 +20,7 @@ class PosixCommandRunner : public CommandRunner {
   bool PreviousCommandFailed() override;
 
   // Runs a command by specifying a list of command line arguments.
-  void RunCommand(const std::vector<std::string> &command) override;
+  void RunCommand(const std::vector<std::string>& command) override;
 
  private:
   pid_t current_process_;

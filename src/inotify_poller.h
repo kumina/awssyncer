@@ -16,15 +16,16 @@ struct InotifyEvent {
 // Poller of inotify events.
 class InotifyPoller {
  public:
-  virtual ~InotifyPoller() {}
+  virtual ~InotifyPoller() {
+  }
 
   // Attaches a watch to a single directory.
-  virtual bool AddWatch(const std::string &path) = 0;
+  virtual bool AddWatch(const std::string& path) = 0;
 
   // Extracts the next event from the inotify event queue. Returns false
   // if no events are present.
   // TODO(ed): This should just return std::optional<InotifyEvent>.
-  virtual bool GetNextEvent(InotifyEvent *event) = 0;
+  virtual bool GetNextEvent(InotifyEvent* event) = 0;
 
   // Whether or not this queue had to drop events due to a large amount of
   // activity happening on the file system.

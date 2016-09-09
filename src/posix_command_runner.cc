@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-extern char **environ;
+extern char** environ;
 
 PosixCommandRunner::~PosixCommandRunner() {
   // Kill the child process.
@@ -38,13 +38,13 @@ bool PosixCommandRunner::PreviousCommandFailed() {
   return previous_command_failed_;
 }
 
-void PosixCommandRunner::RunCommand(const std::vector<std::string> &command) {
+void PosixCommandRunner::RunCommand(const std::vector<std::string>& command) {
   assert(current_process_ == -1 && "Previous command is still running");
 
   // Convert argument strings to char *, as expected by posix_spawnp().
-  std::vector<char *> args;
-  for (const std::string &arg : command)
-    args.push_back(const_cast<char *>(arg.c_str()));
+  std::vector<char*> args;
+  for (const std::string& arg : command)
+    args.push_back(const_cast<char*>(arg.c_str()));
   args.push_back(nullptr);
 
   // Spawn subprocess.
