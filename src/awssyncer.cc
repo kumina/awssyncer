@@ -75,6 +75,7 @@ static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
           runner.Remove(*path);
         } else {
           Log() << "Failed to stat " << *path << std::endl;
+          return;
         }
       }
     }
