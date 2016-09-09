@@ -62,19 +62,19 @@ static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
         Log() << "Failed to execute command" << std::endl;
         return;
       }
-      if (dirt.HasDirtyPaths()) {
-        std::string path = dirt.ExtractDirtyPath();
-        Log() << "Processing path " << path << std::endl;
+      std::experimental::optional<std::string> path = dirt.ExtractDirtyPath();
+      if (path) {
+        Log() << "Processing path " << *path << std::endl;
         struct stat sb;
-        if (lstat(path.c_str(), &sb) == 0) {
+        if (lstat(path->c_str(), &sb) == 0) {
           if (S_ISDIR(sb.st_mode))
-            runner.SyncDirectory(path);
+            runner.SyncDirectory(*path);
           else
-            runner.CopyFile(path);
+            runner.CopyFile(*path);
         } else if (errno == ENOENT) {
-          runner.Remove(path);
+          runner.Remove(*path);
         } else {
-          Log() << "Failed to stat " << path << std::endl;
+          Log() << "Failed to stat " << *path << std::endl;
         }
       }
     }

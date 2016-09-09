@@ -1,6 +1,7 @@
 #ifndef FILESYSTEM_DIRT_H
 #define FILESYSTEM_DIRT_H
 
+#include <experimental/optional>
 #include <map>
 #include <string>
 
@@ -19,11 +20,8 @@ class FilesystemDirt {
   // Marks a file dirty.
   void AddDirtyPath(const std::string& path);
 
-  // Is ExtractDirtyPath() going to return anything meaningful?
-  bool HasDirtyPaths();
-
   // Extract a pathname of a file or directory that is dirty.
-  std::string ExtractDirtyPath();
+  std::experimental::optional<std::string> ExtractDirtyPath();
 
  private:
   // Is this path dirty?
