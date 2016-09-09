@@ -24,8 +24,7 @@ class MultipleCommandRunner {
   bool PreviousCommandFailed();
 
   // Enqueues a command by specifying a list of command line arguments.
-  virtual void RunCommand(const std::vector<std::string>& command,
-                          bool ignore_failure);
+  void RunCommand(const std::vector<std::string>& command, bool ignore_failure);
 
  private:
   CommandRunner* command_runner_;
