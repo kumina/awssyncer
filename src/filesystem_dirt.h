@@ -21,6 +21,7 @@ class FilesystemDirt {
   void AddDirtyPath(const std::string& path);
 
   // Extract a pathname of a file or directory that is dirty.
+  // TODO(ed): Switch this to std::optional<> once supported.
   std::experimental::optional<std::string> ExtractDirtyPath();
 
  private:
