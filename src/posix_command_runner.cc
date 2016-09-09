@@ -48,7 +48,7 @@ void PosixCommandRunner::RunCommand(const std::vector<std::string>& command) {
   args.push_back(nullptr);
 
   // Spawn subprocess.
-  if (posix_spawnp(&current_process_, command[0].c_str(), NULL, NULL,
+  if (posix_spawnp(&current_process_, command[0].c_str(), nullptr, nullptr,
                    args.data(), environ) != 0) {
     current_process_ = -1;
     previous_command_failed_ = true;
