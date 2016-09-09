@@ -3,6 +3,9 @@
 
 #include <gtest/gtest.h>
 
+#include <experimental/optional>
+#include <string>
+
 namespace {
 
 // TODO(ed): Rewrite this to use gmock.h.
@@ -16,10 +19,11 @@ class FixedResponseInotifyPoller : public InotifyPoller {
     return true;
   }
 
-  bool GetNextEvent(InotifyEvent* event) {
-    event->path = done_ ? "/some/other/path" : "/matching/path/";
+  std::experimental::optional<InotifyEvent> GetNextEvent() {
+    InotifyEvent event;
+    event.path = done_ ? "/some/other/path" : "/matching/path/";
     done_ = true;
-    return true;
+    return event;
   }
 
   bool EventsDropped() {
@@ -43,16 +47,16 @@ TEST(FilteringInotifyPollerTest, GetNextEvent_match) {
   // We should return the second event, as we have matches.
   FixedResponseInotifyPoller frip;
   FilteringInotifyPoller fip(&frip, "matching");
-  InotifyEvent event;
-  ASSERT_TRUE(fip.GetNextEvent(&event));
-  ASSERT_EQ("/some/other/path", event.path);
+  std::experimental::optional<InotifyEvent> event = fip.GetNextEvent();
+  ASSERT_TRUE(event);
+  ASSERT_EQ("/some/other/path", event->path);
 }
 
 TEST(FilteringInotifyPollerTest, GetNextEvent_nomatch) {
   // We should return the first event, as there is no match.
   FixedResponseInotifyPoller frip;
   FilteringInotifyPoller fip(&frip, "not_present");
-  InotifyEvent event;
-  ASSERT_TRUE(fip.GetNextEvent(&event));
-  ASSERT_EQ("/matching/path/", event.path);
+  std::experimental::optional<InotifyEvent> event = fip.GetNextEvent();
+  ASSERT_TRUE(event);
+  ASSERT_EQ("/matching/path/", event->path);
 }

@@ -3,6 +3,7 @@
 
 #include "inotify_poller.h"
 
+#include <experimental/optional>
 #include <map>
 #include <string>
 
@@ -17,7 +18,7 @@ class NonrecursiveInotifyPoller : public InotifyPoller {
 
   // Extracts the next event from the inotify event queue. Returns false
   // if no events are present.
-  bool GetNextEvent(InotifyEvent* event) override;
+  std::experimental::optional<InotifyEvent> GetNextEvent() override;
 
   // Whether or not this queue had to drop events due to a large amount of
   // activity happening on the file system.

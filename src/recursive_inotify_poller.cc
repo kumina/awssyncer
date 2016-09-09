@@ -3,6 +3,7 @@
 #include <dirent.h>
 
 #include <cstring>
+#include <experimental/optional>
 
 bool RecursiveInotifyPoller::AddWatch(const std::string& path) {
   // Add the path itself.
@@ -23,14 +24,12 @@ bool RecursiveInotifyPoller::AddWatch(const std::string& path) {
   return true;
 }
 
-bool RecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
-  // Fetch next event.
-  if (!ip_->GetNextEvent(event))
-    return false;
-
+std::experimental::optional<InotifyEvent>
+RecursiveInotifyPoller::GetNextEvent() {
   // Add a new watch in case we've created a new directory.
-  if (event->type == InotifyEventType::CREATED &&
+  std::experimental::optional<InotifyEvent> event = ip_->GetNextEvent();
+  if (event && event->type == InotifyEventType::CREATED &&
       event->path[event->path.size() - 1] == '/')
     AddWatch(event->path);
-  return true;
+  return event;
 }

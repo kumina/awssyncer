@@ -3,6 +3,7 @@
 
 #include "inotify_poller.h"
 
+#include <experimental/optional>
 #include <regex>
 
 // Inotify poller that can remove files and/or directories from the results
@@ -18,7 +19,7 @@ class FilteringInotifyPoller : public InotifyPoller {
   bool AddWatch(const std::string& path) override;
 
   // Gets the next event from the inotify poller.
-  bool GetNextEvent(InotifyEvent* event) override;
+  std::experimental::optional<InotifyEvent> GetNextEvent() override;
 
   // Whether or not this queue had to drop events due to a large amount of
   // activity happening on the file system.

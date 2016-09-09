@@ -1,6 +1,7 @@
 #ifndef INOTIFY_POLLER_H
 #define INOTIFY_POLLER_H
 
+#include <experimental/optional>
 #include <map>
 #include <string>
 
@@ -24,8 +25,8 @@ class InotifyPoller {
 
   // Extracts the next event from the inotify event queue. Returns false
   // if no events are present.
-  // TODO(ed): This should just return std::optional<InotifyEvent>.
-  virtual bool GetNextEvent(InotifyEvent* event) = 0;
+  // TODO(ed): Switch this to std::optional<> once supported.
+  virtual std::experimental::optional<InotifyEvent> GetNextEvent() = 0;
 
   // Whether or not this queue had to drop events due to a large amount of
   // activity happening on the file system.

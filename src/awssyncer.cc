@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
+#include <experimental/optional>
 #include <iostream>
 #include <thread>
 
@@ -47,9 +48,9 @@ static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
 
   for (;;) {
     // Handle all inotify events.
-    InotifyEvent event;
-    while (rip.GetNextEvent(&event))
-      dirt.AddDirtyPath(event.path);
+    std::experimental::optional<InotifyEvent> event;
+    while ((event = rip.GetNextEvent()))
+      dirt.AddDirtyPath(event->path);
     if (nip.EventsDropped()) {
       Log() << "Inotify dropped events" << std::endl;
       return;

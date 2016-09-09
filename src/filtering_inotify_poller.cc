@@ -1,6 +1,7 @@
 #include "filtering_inotify_poller.h"
 
 #include <cassert>
+#include <experimental/optional>
 #include <regex>
 
 FilteringInotifyPoller::FilteringInotifyPoller(InotifyPoller* ip,
@@ -13,11 +14,12 @@ bool FilteringInotifyPoller::AddWatch(const std::string& path) {
   return !std::regex_search(path, regex_) && ip_->AddWatch(path);
 }
 
-bool FilteringInotifyPoller::GetNextEvent(InotifyEvent* event) {
+std::experimental::optional<InotifyEvent>
+FilteringInotifyPoller::GetNextEvent() {
   // Skip all events that have matching pathnames.
-  while (ip_->GetNextEvent(event)) {
-    if (!std::regex_search(event->path, regex_))
-      return true;
-  }
-  return false;
+  std::experimental::optional<InotifyEvent> event;
+  while ((event = ip_->GetNextEvent()) &&
+         std::regex_search(event->path, regex_))
+    ;
+  return event;
 }

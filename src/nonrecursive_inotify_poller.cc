@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cerrno>
 #include <cstring>
+#include <experimental/optional>
 
 NonrecursiveInotifyPoller::NonrecursiveInotifyPoller()
     : fd_(inotify_init1(IN_NONBLOCK | IN_CLOEXEC)),
@@ -36,7 +37,8 @@ bool NonrecursiveInotifyPoller::AddWatch(const std::string& path) {
   return true;
 }
 
-bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
+std::experimental::optional<InotifyEvent>
+NonrecursiveInotifyPoller::GetNextEvent() {
   struct inotify_event ev;
   for (;;) {
     // Read new events from the kernel if needed.
@@ -44,7 +46,7 @@ bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
         read_buffer_length_) {
       ssize_t readlen = read(fd_, read_buffer_, sizeof(read_buffer_));
       if (readlen == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
-        return false;
+        return {};
       assert(readlen >= (ssize_t)sizeof(struct inotify_event) &&
              "inotify read failed");
       read_buffer_offset_ = 0;
@@ -68,31 +70,32 @@ bool NonrecursiveInotifyPoller::GetNextEvent(InotifyEvent* event) {
 
     if (ev.len > 0) {
       // Extract the event type.
+      InotifyEvent event;
       switch (ev.mask & IN_ALL_EVENTS) {
         case IN_CREATE:
         case IN_MOVED_TO:
-          event->type = InotifyEventType::CREATED;
+          event.type = InotifyEventType::CREATED;
           break;
         case IN_DELETE:
         case IN_MOVED_FROM:
-          event->type = InotifyEventType::DELETED;
+          event.type = InotifyEventType::DELETED;
           break;
         case IN_MODIFY:
-          event->type = InotifyEventType::MODIFIED;
+          event.type = InotifyEventType::MODIFIED;
           break;
         default:
           assert(0 && "Unknown event type");
       }
 
       // Extract the pathname string.
-      event->path = directories_[ev.wd];
-      event->path += std::string(read_buffer_ + read_buffer_offset_);
+      event.path = directories_[ev.wd];
+      event.path += std::string(read_buffer_ + read_buffer_offset_);
       if ((ev.mask & IN_ISDIR) != 0)
-        event->path += '/';
+        event.path += '/';
       read_buffer_offset_ += ev.len;
       assert(read_buffer_offset_ <= read_buffer_length_ &&
              "Attempted to escape read buffer");
-      return true;
+      return event;
     }
   }
 }
