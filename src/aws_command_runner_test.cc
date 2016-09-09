@@ -8,7 +8,6 @@
 using ::testing::Return;
 
 namespace {
-
 class MockCommandRunner : public CommandRunner {
  public:
   MOCK_METHOD0(Finished, bool());

@@ -10,23 +10,19 @@
 using ::testing::Return;
 
 namespace {
-
 class MockInotifyPoller : public InotifyPoller {
  public:
   MOCK_METHOD1(AddWatch, bool(const std::string& path));
   MOCK_METHOD0(GetNextEvent, std::experimental::optional<InotifyEvent>());
   MOCK_METHOD0(EventsDropped, bool());
 };
-
 }
 
 TEST(FilteringInotifyPollerTest, AddWatch) {
   // We shouldn't be allowed to install watches on matching paths.
   MockInotifyPoller mip;
-  EXPECT_CALL(mip, AddWatch("/some/other/path/1"))
-      .WillOnce(Return(true));
-  EXPECT_CALL(mip, AddWatch("/some/other/path/2"))
-      .WillOnce(Return(false));
+  EXPECT_CALL(mip, AddWatch("/some/other/path/1")).WillOnce(Return(true));
+  EXPECT_CALL(mip, AddWatch("/some/other/path/2")).WillOnce(Return(false));
 
   FilteringInotifyPoller fip(&mip, "matching");
   ASSERT_FALSE(fip.AddWatch("/matching/path/"));
