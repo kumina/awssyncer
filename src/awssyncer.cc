@@ -67,9 +67,10 @@ static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
         Log() << "Processing path " << *path << std::endl;
         struct stat sb;
         if (lstat(path->c_str(), &sb) == 0) {
+          // Only sync files and directories. AWS doesn't support other types.
           if (S_ISDIR(sb.st_mode))
             runner.SyncDirectory(*path);
-          else
+          else if (S_ISREG(sb.st_mode))
             runner.CopyFile(*path);
         } else if (errno == ENOENT) {
           runner.Remove(*path);
