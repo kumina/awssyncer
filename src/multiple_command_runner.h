@@ -1,3 +1,8 @@
+// Copyright (c) 2016 Kumina, https://kumina.nl/
+//
+// This file is distributed under a 2-clause BSD license.
+// See the LICENSE file for details.
+
 #ifndef MULTIPLE_COMMAND_RUNNER_H
 #define MULTIPLE_COMMAND_RUNNER_H
 
