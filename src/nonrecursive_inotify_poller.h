@@ -8,6 +8,7 @@
 
 #include "inotify_poller.h"
 
+#include <cstddef>
 #include <experimental/optional>
 #include <map>
 #include <string>
@@ -37,8 +38,8 @@ class NonrecursiveInotifyPoller : public InotifyPoller {
   bool events_dropped_;
 
   char read_buffer_[65536];
-  size_t read_buffer_length_;
-  size_t read_buffer_offset_;
+  std::size_t read_buffer_length_;
+  std::size_t read_buffer_offset_;
 };
 
 #endif

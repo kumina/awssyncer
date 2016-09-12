@@ -7,6 +7,7 @@
 #include "multiple_command_runner.h"
 
 #include <cassert>
+#include <cstddef>
 
 bool AwsCommandRunner::Finished() {
   return command_runner_->Finished();
@@ -37,7 +38,7 @@ void AwsCommandRunner::Remove(const std::string& path) {
 }
 
 std::string AwsCommandRunner::GetFullUrl(const std::string& path) {
-  size_t strip_length = local_path_.size() - 1;
+  std::size_t strip_length = local_path_.size() - 1;
   assert(path.compare(0, strip_length, local_path_, 0, strip_length) == 0 &&
          "Path does not start with the required prefix");
   return "s3://" + s3_bucket_ + std::string(path, strip_length);

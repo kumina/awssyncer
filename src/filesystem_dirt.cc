@@ -6,6 +6,7 @@
 #include "filesystem_dirt.h"
 
 #include <cassert>
+#include <cstddef>
 #include <experimental/optional>
 
 void FilesystemDirt::AddDirtyPath(const std::string& path) {
@@ -16,8 +17,8 @@ void FilesystemDirt::AddDirtyPath(const std::string& path) {
       children_.clear();
     } else {
       // Extract first pathname component from input path.
-      size_t nonslash = path.find_first_not_of('/');
-      size_t slash = path.find('/', nonslash);
+      std::size_t nonslash = path.find_first_not_of('/');
+      std::size_t slash = path.find('/', nonslash);
       std::string first(path, nonslash, slash - nonslash);
       std::string remainder;
       if (slash != std::string::npos)
