@@ -21,8 +21,8 @@
 #include <iostream>
 #include <thread>
 
-// Returns a reference to the logging sink, already prefixing the line with the
-// current timestamp.
+// Returns a reference to the logging sink, already prefixing the line
+// with the current timestamp.
 static std::ostream& Log() {
   time_t t = std::time(nullptr);
   char buf[32];
@@ -30,10 +30,51 @@ static std::ostream& Log() {
   return std::cout << buf;
 }
 
-// Performs a single iteration of the AWS syncer, terminating if an error has
-// occurred.
-static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
-                    const std::string& filter_regex) {
+// Performs a single loop of the syncer, handling inotify events and
+// potentially starting a new 'aws s3' process.
+static bool ProcessEvents(InotifyPoller* ip, FilesystemDirt* dirt,
+                          AwsCommandRunner* runner) {
+  // Handle all inotify events.
+  std::experimental::optional<InotifyEvent> event;
+  while ((event = ip->GetNextEvent()))
+    dirt->AddDirtyPath(event->path);
+  if (ip->EventsDropped()) {
+    Log() << "Inotify dropped events" << std::endl;
+    return false;
+  }
+
+  // Potentially spawn another sync command.
+  if (runner->Finished()) {
+    if (runner->PreviousCommandFailed()) {
+      Log() << "Failed to execute command" << std::endl;
+      return false;
+    }
+    std::experimental::optional<std::string> path = dirt->ExtractDirtyPath();
+    if (path) {
+      Log() << "Processing path " << *path << std::endl;
+      struct stat sb;
+      if (lstat(path->c_str(), &sb) == 0) {
+        // Only sync files and directories. AWS doesn't support other types.
+        if (S_ISDIR(sb.st_mode))
+          runner->SyncDirectory(*path);
+        else if (S_ISREG(sb.st_mode))
+          runner->CopyFile(*path);
+      } else if (errno == ENOENT) {
+        runner->Remove(*path);
+      } else {
+        Log() << "Failed to stat " << *path << std::endl;
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+// Instantiates all objects needed for syncing and handles events until
+// an error has occurred.
+static void RunSyncer(const std::string& local_path,
+                      const std::string& s3_bucket,
+                      const std::string& filter_regex) {
   // Set up inotify polling.
   NonrecursiveInotifyPoller nip;
   FilteringInotifyPoller fip(&nip, filter_regex);
@@ -51,41 +92,7 @@ static void RunOnce(const std::string& local_path, const std::string& s3_bucket,
   MultipleCommandRunner multiple_command_runner(&posix_runner);
   AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket);
 
-  for (;;) {
-    // Handle all inotify events.
-    std::experimental::optional<InotifyEvent> event;
-    while ((event = rip.GetNextEvent()))
-      dirt.AddDirtyPath(event->path);
-    if (nip.EventsDropped()) {
-      Log() << "Inotify dropped events" << std::endl;
-      return;
-    }
-
-    // Potentially spawn another sync command.
-    if (runner.Finished()) {
-      if (runner.PreviousCommandFailed()) {
-        Log() << "Failed to execute command" << std::endl;
-        return;
-      }
-      std::experimental::optional<std::string> path = dirt.ExtractDirtyPath();
-      if (path) {
-        Log() << "Processing path " << *path << std::endl;
-        struct stat sb;
-        if (lstat(path->c_str(), &sb) == 0) {
-          // Only sync files and directories. AWS doesn't support other types.
-          if (S_ISDIR(sb.st_mode))
-            runner.SyncDirectory(*path);
-          else if (S_ISREG(sb.st_mode))
-            runner.CopyFile(*path);
-        } else if (errno == ENOENT) {
-          runner.Remove(*path);
-        } else {
-          Log() << "Failed to stat " << *path << std::endl;
-          return;
-        }
-      }
-    }
-
+  while (ProcessEvents(&rip, &dirt, &runner)) {
     // TODO(ed): Call poll() here instead of sleeping for a second.
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
@@ -101,7 +108,7 @@ int main() {
   // of a couple of seconds in between, so that we never perform any actions in
   // a tight loop.
   for (;;) {
-    RunOnce(local_path, s3_bucket, filter_regex);
+    RunSyncer(local_path, s3_bucket, filter_regex);
     Log() << "Restarting in five seconds" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(5));
   }
