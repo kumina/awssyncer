@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <vector>
 
 bool AwsCommandRunner::Finished() {
   return command_runner_->Finished();

@@ -6,8 +6,8 @@
 #ifndef AWS_COMMAND_RUNNER_H
 #define AWS_COMMAND_RUNNER_H
 
+#include <set>
 #include <string>
-#include <vector>
 
 class MultipleCommandRunner;
 
@@ -17,7 +17,7 @@ class AwsCommandRunner {
  public:
   AwsCommandRunner(MultipleCommandRunner* command_runner,
                    const std::string& local_path, const std::string& s3_bucket,
-                   const std::vector<std::string>& sync_excludes)
+                   const std::set<std::string>& sync_excludes)
       : command_runner_(command_runner),
         local_path_(local_path),
         s3_bucket_(s3_bucket),
@@ -51,7 +51,7 @@ class AwsCommandRunner {
 
   // List of globbing patterns that are passed to "aws s3 sync". Each of
   // these is turned into an additional "--excludes" flag.
-  const std::vector<std::string> sync_excludes_;
+  const std::set<std::string> sync_excludes_;
 
   // Translates a local path to a full URL to the S3 bucket with the
   // pathname prefix stripped off.
