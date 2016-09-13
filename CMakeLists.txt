@@ -15,6 +15,7 @@ add_library(libawssyncer STATIC
             src/filtering_inotify_poller.cc
             src/multiple_command_runner.cc
             src/nonrecursive_inotify_poller.cc
+            src/periodic_filesystem_dirtier.cc
             src/posix_command_runner.cc
             src/recursive_inotify_poller.cc)
 

@@ -8,6 +8,7 @@
 #include "filtering_inotify_poller.h"
 #include "multiple_command_runner.h"
 #include "nonrecursive_inotify_poller.h"
+#include "periodic_filesystem_dirtier.h"
 #include "posix_command_runner.h"
 #include "recursive_inotify_poller.h"
 
@@ -33,6 +34,7 @@ static std::ostream& Log() {
 // Performs a single loop of the syncer, handling inotify events and
 // potentially starting a new 'aws s3' process.
 static bool ProcessEvents(InotifyPoller* ip, FilesystemDirt* dirt,
+                          PeriodicFilesystemDirtier* periodic_dirtier,
                           AwsCommandRunner* runner) {
   // Handle all inotify events.
   std::experimental::optional<InotifyEvent> event;
@@ -42,6 +44,10 @@ static bool ProcessEvents(InotifyPoller* ip, FilesystemDirt* dirt,
     Log() << "Inotify dropped events" << std::endl;
     return false;
   }
+
+  // Periodically force dirtying of certain directories to really ensure
+  // we're not missing out on anything.
+  periodic_dirtier->Tick();
 
   // Potentially spawn another sync command.
   if (runner->Finished()) {
@@ -82,17 +88,18 @@ static void RunSyncer(const std::string& local_path,
   bool res = rip.AddWatch(local_path);
   assert(res);
 
-  // Start off marking the entire file system as dirty. This forces an initial
-  // synchronisation of all of the data.
+  // Data structure for keeping track of filesystem dirtiness. Force a
+  // full sync of the data every six hours.
   FilesystemDirt dirt;
-  dirt.AddDirtyPath(local_path);
+  PeriodicFilesystemDirtier periodic_dirtier(&dirt, local_path,
+                                             std::chrono::hours(6));
 
   // Objects for running the AWS command line tool sequentially.
   PosixCommandRunner posix_runner;
   MultipleCommandRunner multiple_command_runner(&posix_runner);
   AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket);
 
-  while (ProcessEvents(&rip, &dirt, &runner)) {
+  while (ProcessEvents(&rip, &dirt, &periodic_dirtier, &runner)) {
     // TODO(ed): Call poll() here instead of sleeping for a second.
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
