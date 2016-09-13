@@ -27,7 +27,16 @@ void AwsCommandRunner::CopyFile(const std::string& path) {
 void AwsCommandRunner::SyncDirectory(const std::string& path) {
   std::string full_url = GetFullUrl(path);
   command_runner_->RunCommand({"aws", "s3", "rm", full_url}, true);
-  command_runner_->RunCommand({"aws", "s3", "sync", path, full_url}, false);
+
+  // Append files that we want to exclude in the form of "--exclude" options.
+  std::vector<std::string> sync_command{{"aws", "s3", "sync"}};
+  for (const std::string& sync_exclude : sync_excludes_) {
+    sync_command.push_back("--exclude");
+    sync_command.push_back(sync_exclude);
+  }
+  sync_command.push_back(path);
+  sync_command.push_back(full_url);
+  command_runner_->RunCommand(sync_command, false);
 }
 
 void AwsCommandRunner::Remove(const std::string& path) {

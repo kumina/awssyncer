@@ -16,10 +16,12 @@ class MultipleCommandRunner;
 class AwsCommandRunner {
  public:
   AwsCommandRunner(MultipleCommandRunner* command_runner,
-                   const std::string& local_path, const std::string& s3_bucket)
+                   const std::string& local_path, const std::string& s3_bucket,
+                   const std::vector<std::string>& sync_excludes)
       : command_runner_(command_runner),
         local_path_(local_path),
-        s3_bucket_(s3_bucket) {
+        s3_bucket_(s3_bucket),
+        sync_excludes_(sync_excludes) {
   }
 
   // Returns true of there is no command currently running.
@@ -46,6 +48,10 @@ class AwsCommandRunner {
 
   // S3 bucket name, e.g. "mybucket".
   const std::string s3_bucket_;
+
+  // List of globbing patterns that are passed to "aws s3 sync". Each of
+  // these is turned into an additional "--excludes" flag.
+  const std::vector<std::string> sync_excludes_;
 
   // Translates a local path to a full URL to the S3 bucket with the
   // pathname prefix stripped off.

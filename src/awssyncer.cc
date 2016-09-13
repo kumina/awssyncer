@@ -96,7 +96,7 @@ static void RunSyncer(const std::string& local_path,
   // Objects for running the AWS command line tool sequentially.
   PosixCommandRunner posix_runner;
   MultipleCommandRunner multiple_command_runner(&posix_runner);
-  AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket);
+  AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket, {});
 
   while (ProcessEvents(&rip, &dirt, &periodic_dirtier, &runner)) {
     // TODO(ed): Call poll() here instead of sleeping for a second.

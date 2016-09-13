@@ -32,7 +32,7 @@ TEST(AwsCommandRunner, Finished) {
       .WillRepeatedly(Return(false));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
-                                      "unused");
+                                      "unused", {});
   ASSERT_FALSE(aws_command_runner.Finished());
   ASSERT_TRUE(aws_command_runner.Finished());
 }
@@ -46,7 +46,7 @@ TEST(AwsCommandRunner, PreviousCommandFailed) {
       .WillOnce(Return(true));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
-                                      "unused");
+                                      "unused", {});
   ASSERT_FALSE(aws_command_runner.PreviousCommandFailed());
   ASSERT_TRUE(aws_command_runner.PreviousCommandFailed());
 }
@@ -69,7 +69,7 @@ TEST(AwsCommandRunner, CopyFile) {
       .WillRepeatedly(Return(false));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
-                                      "bucket");
+                                      "bucket", {});
   aws_command_runner.CopyFile("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());
@@ -89,7 +89,8 @@ TEST(AwsCommandRunner, SyncDirectory) {
       .Times(1);
   EXPECT_CALL(command_runner,
               RunCommand(std::vector<std::string>({
-                  "aws", "s3", "sync", "/tmp/foo", "s3://bucket/foo",
+                  "aws", "s3", "sync", "--exclude", "*.jpg", "--exclude",
+                  "*.mp3", "/tmp/foo", "s3://bucket/foo",
               })))
       .Times(1);
   EXPECT_CALL(command_runner, Finished()).WillRepeatedly(Return(true));
@@ -97,7 +98,7 @@ TEST(AwsCommandRunner, SyncDirectory) {
       .WillRepeatedly(Return(false));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
-                                      "bucket");
+                                      "bucket", {"*.jpg", "*.mp3"});
   aws_command_runner.SyncDirectory("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());
@@ -125,7 +126,7 @@ TEST(AwsCommandRunner, Remove) {
       .WillRepeatedly(Return(false));
 
   AwsCommandRunner aws_command_runner(&multiple_command_runner, "/tmp/",
-                                      "bucket");
+                                      "bucket", {});
   aws_command_runner.Remove("/tmp/foo");
 
   ASSERT_FALSE(aws_command_runner.Finished());
