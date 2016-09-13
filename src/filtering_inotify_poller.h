@@ -33,8 +33,8 @@ class FilteringInotifyPoller : public InotifyPoller {
   }
 
  private:
-  InotifyPoller* ip_;
-  std::regex regex_;
+  InotifyPoller* const ip_;
+  const std::regex regex_;
 };
 
 #endif

@@ -33,7 +33,7 @@ class NonrecursiveInotifyPoller : public InotifyPoller {
   }
 
  private:
-  int fd_;
+  const int fd_;
   std::map<int, std::string> directories_;
   bool events_dropped_;
 

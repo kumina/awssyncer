@@ -39,13 +39,13 @@ class AwsCommandRunner {
 
  private:
   // Underlying command runner.
-  MultipleCommandRunner* command_runner_;
+  MultipleCommandRunner* const command_runner_;
 
   // Path prefix to strip from local paths.
-  std::string local_path_;
+  const std::string local_path_;
 
   // S3 bucket name, e.g. "mybucket".
-  std::string s3_bucket_;
+  const std::string s3_bucket_;
 
   // Translates a local path to a full URL to the S3 bucket with the
   // pathname prefix stripped off.

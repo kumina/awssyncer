@@ -31,7 +31,7 @@ class RecursiveInotifyPoller : public InotifyPoller {
   }
 
  private:
-  InotifyPoller* ip_;
+  InotifyPoller* const ip_;
 };
 
 #endif

@@ -32,7 +32,7 @@ class MultipleCommandRunner {
   void RunCommand(const std::vector<std::string>& command, bool ignore_failure);
 
  private:
-  CommandRunner* command_runner_;
+  CommandRunner* const command_runner_;
   std::queue<std::pair<std::vector<std::string>, bool>> enqueued_commands_;
   bool ignore_failures_for_current_command_;
   bool previous_command_failed_;
