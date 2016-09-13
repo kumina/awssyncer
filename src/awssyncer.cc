@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <experimental/optional>
+#include <iomanip>
 #include <iostream>
 #include <thread>
 
@@ -26,9 +27,7 @@
 // with the current timestamp.
 static std::ostream& Log() {
   time_t t = std::time(nullptr);
-  char buf[32];
-  std::strftime(buf, sizeof(buf), "%FT%T%z: ", std::localtime(&t));
-  return std::cout << buf;
+  return std::cout << std::put_time(std::localtime(&t), "%FT%T%z: ");
 }
 
 // Performs a single loop of the syncer, handling inotify events and
