@@ -103,6 +103,7 @@ static void RunSyncer(const std::string& local_path,
 
   while (ProcessEvents(&rip, &dirt, &periodic_dirtier, &runner)) {
     // TODO(ed): Call poll() here instead of sleeping for a second.
+    // TODO(ed): Alternatively, make all intervals configurable.
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 }
