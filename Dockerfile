@@ -7,6 +7,7 @@ MAINTAINER support@kumina.nl
 # ENV AWS_SECRET_ACCESS_KEY ''
 # ENV FILTER_REGEX ''
 # ENV S3_BUCKET ''
+# ENV SYNC_EXCLUDES ''
 
 COPY docker_startup.sh /sbin/docker_startup.sh
 COPY . /tmp/awssyncer-src/

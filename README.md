@@ -19,6 +19,10 @@ This utility obtains its configuration through environment variables:
 - `FILTER_REGEX`: Regular expression of files/directories whose activity
   should be monitored. This does not mean that these files will not end
   up in S3. It only applies to monitoring; not synchronisation.
+- `SYNC_EXCLUDES`: List of globs that should be passed to the
+  `aws s3 sync --exclude`. Globs are separated by a `|` character. For
+  example, `*.jpg|*.mp3` will cause `aws s3 sync` to be invoked with
+  `--exclude '*.jpg' --exclude '*.mp3'`.
 
 Credentials for accessing AWS can be configured by exporting the
 canonical AWS environment variables (e.g., `AWS_ACCESS_KEY_ID` and

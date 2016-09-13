@@ -21,6 +21,7 @@
 #include <experimental/optional>
 #include <iomanip>
 #include <iostream>
+#include <set>
 #include <thread>
 
 // Returns a reference to the logging sink, already prefixing the line
@@ -79,7 +80,8 @@ static bool ProcessEvents(InotifyPoller* ip, FilesystemDirt* dirt,
 // an error has occurred.
 static void RunSyncer(const std::string& local_path,
                       const std::string& s3_bucket,
-                      const std::string& filter_regex) {
+                      const std::string& filter_regex,
+                      const std::set<std::string>& sync_excludes) {
   // Set up inotify polling.
   NonrecursiveInotifyPoller nip;
   FilteringInotifyPoller fip(&nip, filter_regex);
@@ -96,7 +98,8 @@ static void RunSyncer(const std::string& local_path,
   // Objects for running the AWS command line tool sequentially.
   PosixCommandRunner posix_runner;
   MultipleCommandRunner multiple_command_runner(&posix_runner);
-  AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket, {});
+  AwsCommandRunner runner(&multiple_command_runner, local_path, s3_bucket,
+                          sync_excludes);
 
   while (ProcessEvents(&rip, &dirt, &periodic_dirtier, &runner)) {
     // TODO(ed): Call poll() here instead of sleeping for a second.
@@ -109,12 +112,27 @@ int main() {
   std::string local_path = std::getenv("LOCAL_PATH");
   std::string s3_bucket = std::getenv("S3_BUCKET");
   std::string filter_regex = std::getenv("FILTER_REGEX");
+  std::string sync_excludes_str = std::getenv("SYNC_EXCLUDES");
+
+  // Convert single string of globs into a list by splitting on the '|',
+  // for example: "*.jpg|*.mp3" -> {"*.jpg", "*.mp3"}.
+  std::set<std::string> sync_excludes;
+  for (;;) {
+    std::size_t split = sync_excludes_str.find('|');
+    if (split != std::string::npos) {
+      sync_excludes.insert(sync_excludes_str.substr(0, split));
+      sync_excludes_str.erase(0, split + 1);
+    } else {
+      sync_excludes.insert(sync_excludes_str);
+      break;
+    }
+  }
 
   // Keep on running indefinitely, restarting if an error occurred. Put a pause
   // of a couple of seconds in between, so that we never perform any actions in
   // a tight loop.
   for (;;) {
-    RunSyncer(local_path, s3_bucket, filter_regex);
+    RunSyncer(local_path, s3_bucket, filter_regex, sync_excludes);
     Log() << "Restarting in five seconds" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(5));
   }
