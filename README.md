@@ -1,4 +1,4 @@
-= awssyncer: an inotify-based automatic syncer for Amazon AWS S3 =
+# awssyncer: an inotify-based automatic syncer for Amazon AWS S3
 
 This repository provides a utility called awssyncer. awssyncer uses
 Linux inotify to track changes to a directory structure, syncing any
@@ -7,7 +7,7 @@ command line interface utility, `aws`, invoking it either to add or
 remove files and directories. awssyncer is written in C++, making use of
 some C++14 and C++17 language features.
 
-= Running awssyncer =
+# Running awssyncer
 
 This utility obtains its configuration through environment variables:
 
@@ -23,7 +23,7 @@ Credentials for accessing AWS can be configured by exporting the
 canonical AWS environment variables (e.g., `AWS_ACCESS_KEY_ID` and
 `AWS_SECRET_ACCESS_KEY`).
 
-= Docker =
+# Docker
 
 This repository also provices a simple Docker file that creates a simple
 installation based on Alpine Linux. After building the awssyncer, it
