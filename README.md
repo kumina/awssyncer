@@ -12,7 +12,8 @@ some C++14 and C++17 language features.
 This utility obtains its configuration through environment variables:
 
 - `LOCAL_PATH`: The local directory that should be synchronised. This
-  path needs to be absolute and must end with a trailing slash.
+  path needs to be absolute and must end with a trailing slash. When
+  running this utility using Docker, it is always set to `/srv/data/`.
 - `S3_BUCKET`: The name of the AWS S3 bucket to which data should be
   synchronised.
 - `FILTER_REGEX`: Regular expression of files/directories whose activity
@@ -27,5 +28,4 @@ canonical AWS environment variables (e.g., `AWS_ACCESS_KEY_ID` and
 
 This repository also provices a simple Docker file that creates a simple
 installation based on Alpine Linux. After building the awssyncer, it
-also invokes the awssyncer unit tests. The provided entry point script
-executes awssyncer so that it synchronises `/srv/data`.
+also invokes the awssyncer unit tests.
