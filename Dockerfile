@@ -10,6 +10,7 @@ MAINTAINER support@kumina.nl
 # ENV SYNC_EXCLUDES ''
 
 COPY docker_startup.sh /sbin/docker_startup.sh
+COPY oneoffcopy.sh /sbin/oneoffcopy.sh
 COPY . /tmp/awssyncer-src/
 
 RUN apk --update upgrade \
