@@ -3,7 +3,7 @@
 This repository provides a utility called awssyncer. awssyncer uses
 Linux inotify to track changes to a directory structure, syncing any
 modifcations into an Amazon AWS S3 bucket. It also does a full
-synchronisation periodically to ensure to changes are missed.
+synchronisation periodically to ensure no changes are missed.
 
 The awssyncer utility makes use of the AWS command line interface
 utility, `aws`, invoking it either to add or remove files and
