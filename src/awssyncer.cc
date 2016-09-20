@@ -108,12 +108,21 @@ static void RunSyncer(const std::string& local_path,
   }
 }
 
+static std::string GetEnvironmentVariable(const std::string& name) {
+  const char* value = std::getenv(name.c_str());
+  if (value == nullptr) {
+    Log() << "Missing environment variable: " << name << std::endl;
+    std::abort();
+  }
+  return value;
+}
+
 int main() {
   // Obtain configuration from environment variables.
-  std::string local_path = std::getenv("LOCAL_PATH");
-  std::string s3_bucket = std::getenv("S3_BUCKET");
-  std::string filter_regex = std::getenv("FILTER_REGEX");
-  std::string sync_excludes_str = std::getenv("SYNC_EXCLUDES");
+  std::string local_path = GetEnvironmentVariable("LOCAL_PATH");
+  std::string s3_bucket = GetEnvironmentVariable("S3_BUCKET");
+  std::string filter_regex = GetEnvironmentVariable("FILTER_REGEX");
+  std::string sync_excludes_str = GetEnvironmentVariable("SYNC_EXCLUDES");
 
   // Convert single string of globs into a list by splitting on the '|',
   // for example: "*.jpg|*.mp3" -> {"*.jpg", "*.mp3"}.
