@@ -30,7 +30,7 @@ void AwsCommandRunner::SyncDirectory(const std::string& path) {
   command_runner_->RunCommand({"aws", "s3", "rm", full_url}, true);
 
   // Append files that we want to exclude in the form of "--exclude" options.
-  std::vector<std::string> sync_command{{"aws", "s3", "sync"}};
+  std::vector<std::string> sync_command{{"aws", "s3", "sync", "--delete"}};
   for (const std::string& sync_exclude : sync_excludes_) {
     sync_command.push_back("--exclude");
     sync_command.push_back(sync_exclude);

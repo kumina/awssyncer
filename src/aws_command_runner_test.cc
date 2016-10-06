@@ -89,8 +89,8 @@ TEST(AwsCommandRunner, SyncDirectory) {
       .Times(1);
   EXPECT_CALL(command_runner,
               RunCommand(std::vector<std::string>({
-                  "aws", "s3", "sync", "--exclude", "*.jpg", "--exclude",
-                  "*.mp3", "/tmp/foo", "s3://bucket/foo",
+                  "aws", "s3", "sync", "--delete", "--exclude", "*.jpg",
+                  "--exclude", "*.mp3", "/tmp/foo", "s3://bucket/foo",
               })))
       .Times(1);
   EXPECT_CALL(command_runner, Finished()).WillRepeatedly(Return(true));
