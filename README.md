@@ -1,3 +1,5 @@
+**IMPORANT** Kumina is no longer maintaining this! Feel free to fork and publish.
+
 # awssyncer: an inotify-based automatic syncer for Amazon AWS S3
 
 This repository provides a utility called awssyncer. awssyncer uses
